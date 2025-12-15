@@ -1,0 +1,77 @@
+<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+  <PropertyGroup>
+    <TargetFramework>net8.0-windows7.0</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+    <UseWPF>true</UseWPF>
+    <RootNamespace>Fic.XTB.PowerBiEmbedder</RootNamespace>
+    <AssemblyName>Fic.XTB.PowerBiEmbedder.Net8</AssemblyName>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Update="AzureLoginDialog.Designer.cs">
+      <DependentUpon>AzureLoginDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Form\ReportPreviewForm.Designer.cs">
+      <DependentUpon>ReportPreviewForm.cs</DependentUpon>
+    </Compile>
+    <Compile Update="PowerBiEmbedder.designer.cs">
+      <DependentUpon>PowerBiEmbedder.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Properties\Resources.Designer.cs">
+      <AutoGen>true</AutoGen>
+      <DesignTime>true</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="AzureLoginDialog.resx">
+      <DependentUpon>AzureLoginDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Form\ReportPreviewForm.resx">
+      <DependentUpon>ReportPreviewForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="PowerBiEmbedder.resx">
+      <DependentUpon>PowerBiEmbedder.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="DockPanelSuite" Version="3.0.6" />
+    <PackageReference Include="DockPanelSuite.ThemeVS2015" Version="3.0.6" />
+    <PackageReference Include="jacobslusser.ScintillaNET" Version="3.6.3" />
+    <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="7.0.0" />
+    <PackageReference Include="Microsoft.CrmSdk.CoreAssemblies" Version="9.0.2.42" />
+    <PackageReference Include="Microsoft.CrmSdk.Deployment" Version="9.0.2.25" />
+    <PackageReference Include="Microsoft.CrmSdk.Workflow" Version="9.0.2.42" />
+    <PackageReference Include="Microsoft.CrmSdk.XrmTooling.CoreAssembly" Version="9.1.0.88" />
+    <PackageReference Include="Microsoft.CrmSdk.XrmTooling.WpfControls" Version="9.1.0.88" />
+    <PackageReference Include="Microsoft.IdentityModel" Version="7.0.0" />
+    <PackageReference Include="Microsoft.IdentityModel.Clients.ActiveDirectory" Version="5.2.9" />
+    <PackageReference Include="Microsoft.Rest.ClientRuntime" Version="2.3.24" />
+    <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.1054.31" />
+    <PackageReference Include="MscrmTools.Xrm.Connection" Version="1.2021.9.46" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="NuGet.Common" Version="6.9.1" />
+    <PackageReference Include="NuGet.Configuration" Version="6.9.1" />
+    <PackageReference Include="NuGet.Core" Version="2.14.0" />
+    <PackageReference Include="NuGet.Frameworks" Version="6.9.1" />
+    <PackageReference Include="NuGet.Packaging" Version="6.9.1" />
+    <PackageReference Include="NuGet.Protocol" Version="6.9.1" />
+    <PackageReference Include="NuGet.Versioning" Version="6.9.1" />
+    <PackageReference Include="System.Text.Json" Version="7.0.3" />
+    <PackageReference Include="System.Text.Encodings.Web" Version="7.0.0" />
+    <PackageReference Include="XrmToolBoxPackage" Version="1.2021.12.53" />
+  </ItemGroup>
+
+  <Target Name="CopyPluginToOutput" AfterTargets="Build">
+    <MakeDir Directories="$(ProjectDir)Plugins" />
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(ProjectDir)Plugins" SkipUnchangedFiles="true" />
+  </Target>
+</Project>

@@ -83,8 +83,9 @@ namespace Fic.XTB.PowerBiEmbedder
                     }
                 });
             }
-            catch (AdalServiceException ex)
+            catch (AdalServiceException adalEx)
             {
+                MessageBox.Show(adalEx.Message, "Authentication error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 EnableButtons();
             }
             catch (Exception ex)

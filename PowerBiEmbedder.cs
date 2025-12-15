@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.Xml.Serialization;
@@ -61,6 +62,27 @@ namespace Fic.XTB.PowerBiEmbedder
 
         private readonly AzureLoginDialog _azureLogin;
         private ReportPreviewForm _previewForm;
+
+        static PowerBiEmbedder()
+        {
+            AppDomain.CurrentDomain.AssemblyResolve += (sender, args) =>
+            {
+                var requested = new AssemblyName(args.Name).Name;
+                if (!requested.Equals("System.Resources.Extensions", StringComparison.OrdinalIgnoreCase))
+                {
+                    return null;
+                }
+
+                var assemblyDirectory = Path.GetDirectoryName(typeof(PowerBiEmbedder).Assembly.Location);
+                if (assemblyDirectory == null)
+                {
+                    return null;
+                }
+
+                var dependencyPath = Path.Combine(assemblyDirectory, "System.Resources.Extensions.dll");
+                return File.Exists(dependencyPath) ? Assembly.LoadFrom(dependencyPath) : null;
+            };
+        }
 
         public PowerBiEmbedder()
         {

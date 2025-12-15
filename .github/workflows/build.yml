@@ -1,0 +1,39 @@
+name: Build and Package Plugin
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '6.0.x'
+
+      - name: Restore
+        run: dotnet restore PowerBiEmbedder.csproj
+
+      - name: Build Release
+        run: dotnet build PowerBiEmbedder.csproj -c Release
+
+      - name: Build Beta package
+        shell: pwsh
+        run: |
+          pwsh build/package-plugin.ps1 -Configuration Beta
+
+      - name: Upload Dist Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: plugin-packages
+          path: |
+            dist/**
+            PluginsBeta/**

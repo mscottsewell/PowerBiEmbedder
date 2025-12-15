@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http.Headers;
 using Fic.XTB.PowerBiEmbedder.Model;
-using Microsoft.IdentityModel.Clients.ActiveDirectory;
+using Microsoft.Identity.Client;
 using Newtonsoft.Json;
 using System.Net.Http;
 
@@ -122,22 +122,30 @@ namespace Fic.XTB.PowerBiEmbedder.Helper
 
         private string GetInteractiveClientToken()
         {
-            AuthenticationContext ac = new AuthenticationContext($"https://login.microsoftonline.com/{_tenantID}");
+            var clientApp = PublicClientApplicationBuilder
+                .Create(_clientId)
+                .WithAuthority(AzureCloudInstance.AzurePublic, _tenantID)
+                .WithRedirectUri(_returnUri)
+                .Build();
+
+            var scopes = new[] { "https://analysis.windows.net/powerbi/api/.default" };
+
             try
             {
-                return ac.AcquireTokenSilentAsync("https://analysis.windows.net/powerbi/api", _clientId).GetAwaiter().GetResult().AccessToken;
+                var accounts = clientApp.GetAccountsAsync().GetAwaiter().GetResult();
+                var silentResult = clientApp.AcquireTokenSilent(scopes, accounts.FirstOrDefault())
+                    .ExecuteAsync().GetAwaiter().GetResult();
+                return silentResult.AccessToken;
             }
-            catch (AdalException adalException)
+            catch (MsalUiRequiredException)
             {
-                if (adalException.ErrorCode == AdalError.FailedToAcquireTokenSilently
-                    || adalException.ErrorCode == AdalError.InteractionRequired)
-                {
-                    return ac.AcquireTokenAsync("https://analysis.windows.net/powerbi/api", _clientId, new Uri(_returnUri),
-                        new PlatformParameters(PromptBehavior.Auto)).GetAwaiter().GetResult().AccessToken;
-                }
+                var interactiveResult = clientApp
+                    .AcquireTokenInteractive(scopes)
+                    .WithPrompt(Prompt.SelectAccount)
+                    .WithUseEmbeddedWebView(false)
+                    .ExecuteAsync().GetAwaiter().GetResult();
+                return interactiveResult.AccessToken;
             }
-
-            return null;
         }
     }
 }
